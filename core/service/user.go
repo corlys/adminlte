@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/corlys/adminlte/core/helper/dto"
-	"github.com/corlys/adminlte/core/repository"
-	"github.com/corlys/adminlte/core/entity"
 	"github.com/corlys/adminlte/common/util"
+	"github.com/corlys/adminlte/core/entity"
+	"github.com/corlys/adminlte/core/helper/dto"
 	errs "github.com/corlys/adminlte/core/helper/errors"
+	"github.com/corlys/adminlte/core/repository"
 )
 
 type userService struct {
@@ -67,7 +67,7 @@ func (s *userService) RegisterUser(userRequest dto.UserRegisterRequest) (dto.Use
 		return dto.UserResponse{}, errs.ErrEmailAlreadyExists
 	}
 	user := entity.User{
-		FullName:     userRequest.FullName,
+		FullName: userRequest.FullName,
 		Email:    userRequest.Email,
 		Password: userRequest.Password,
 	}
@@ -76,9 +76,9 @@ func (s *userService) RegisterUser(userRequest dto.UserRegisterRequest) (dto.Use
 		return dto.UserResponse{}, err
 	}
 	return dto.UserResponse{
-		ID: fmt.Sprint(res.ID),
-		Name: res.FullName,
-		Email: res.Email,
+		ID:      fmt.Sprint(res.ID),
+		Name:    res.FullName,
+		Email:   res.Email,
 		Picture: *res.GravatarUrl,
 	}, nil
 }

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"net/http"
-	"fmt"
 
 	"github.com/corlys/adminlte/common/base"
 	"github.com/corlys/adminlte/core/helper/dto"
@@ -19,7 +18,8 @@ func render(c *gin.Context, status int, template templ.Component) error {
 }
 
 type userController struct {
-	userService service.UserService
+	userService    service.UserService
+	sessionService service.SessionService
 }
 
 type UserController interface {
@@ -30,9 +30,10 @@ type UserController interface {
 	HandleRegis(ctx *gin.Context)
 }
 
-func NewUserController(uService service.UserService) UserController {
+func NewUserController(uService service.UserService, sService service.SessionService) UserController {
 	return &userController{
-		userService: uService,
+		userService:    uService,
+		sessionService: sService,
 	}
 }
 
@@ -52,14 +53,13 @@ func (c *userController) HandleLogin(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Login Failed", err.Error(), http.StatusBadRequest))
 	}
 	loggedIn := c.userService.VerifyLogin(userDto.Email, userDto.Password)
-	fmt.Println(loggedIn, userDto)
-	if loggedIn {
-		render(ctx, http.StatusOK, views.MakeHomePage())		
-		return
-	} else {
+	if !loggedIn {
 		render(ctx, http.StatusOK, views.MakeLoginPage())
 		return
 	}
+	user, _ := c.userService.GetUserByEmail(userDto.Email)
+	c.sessionService.SetUserSession(ctx, user)
+	ctx.Redirect(http.StatusSeeOther, "/")
 }
 func (c *userController) HandleRegis(ctx *gin.Context) {
 	var userDto dto.UserRegisterRequest
@@ -67,6 +67,9 @@ func (c *userController) HandleRegis(ctx *gin.Context) {
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Regis Failed", err.Error(), http.StatusBadRequest))
 	}
-	c.userService.RegisterUser(userDto)
-	render(ctx, http.StatusOK, views.MakeHomePage())
+	_, erro := c.userService.RegisterUser(userDto)
+	if erro != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Regis Failed", err.Error(), http.StatusBadRequest))
+	}
+	ctx.Redirect(http.StatusSeeOther, "/login")
 }
