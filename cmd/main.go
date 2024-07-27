@@ -9,6 +9,8 @@ func main() {
 
 	db := config.DBSetup()
 
+	defer config.DBClose(db)
+
 	server := app.SetupApp(db)
 	server.Run()
 }
