@@ -10,7 +10,10 @@ templ MakeLoginPage() {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<meta name="title" content="AdminLTE 4 | Login Page v2"/>
 			<meta name="author" content="ColorlibHQ"/>
-			<meta name="description" content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS."/>
+			<meta
+				name="description"
+				content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS."
+			/>
 			<meta
 				name="keywords"
 				content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard"
@@ -48,10 +51,7 @@ templ MakeLoginPage() {
 			<div class="login-box">
 				<div class="card card-outline card-primary">
 					<div class="card-header">
-						<a
-							href="../index2.html"
-							class="link-dark text-center link-offset-2 link-opacity-100 link-opacity-50-hover"
-						>
+						<a href="../index2.html" class="link-dark text-center link-offset-2 link-opacity-100 link-opacity-50-hover">
 							<h1 class="mb-0">
 								<b>Admin</b>LTE
 							</h1>
@@ -59,22 +59,17 @@ templ MakeLoginPage() {
 					</div>
 					<div class="card-body login-card-body">
 						<p class="login-box-msg">Sign in to start your session</p>
-						<form action="../index3.html" method="post">
+						<form action="/login" method="post">
 							<div class="input-group mb-1">
 								<div class="form-floating">
-									<input
-										id="loginEmail"
-										type="email"
-										class="form-control"
-										value=""
-										placeholder=""
-									/> <label for="loginEmail">Email</label>
+									<input name="email" id="loginEmail" type="email" class="form-control" value="" placeholder=""/>
+									<label for="loginEmail">Email</label>
 								</div>
 								<div class="input-group-text"><span class="bi bi-envelope"></span> </div>
 							</div>
 							<div class="input-group mb-1">
 								<div class="form-floating">
-									<input id="loginPassword" type="password" class="form-control" placeholder=""/>
+									<input name="password" id="loginPassword" type="password" class="form-control" placeholder=""/>
 									<label for="loginPassword">Password</label>
 								</div>
 								<div class="input-group-text"><span class="bi bi-lock-fill"></span> </div>
