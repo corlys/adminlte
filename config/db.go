@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/corlys/adminlte/database"
+
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -30,6 +32,8 @@ func DBSetup() *gorm.DB {
 		fmt.Println(err)
 		panic(err)
 	}
+
+	database.DBMigrate(db)
 
 	return db
 

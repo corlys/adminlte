@@ -2,9 +2,13 @@ package main
 
 import (
 	"github.com/corlys/adminlte/app"
+	"github.com/corlys/adminlte/config"
 )
 
 func main() {
-	server := app.SetupApp()
+
+	db := config.DBSetup()
+
+	server := app.SetupApp(db)
 	server.Run()
 }
