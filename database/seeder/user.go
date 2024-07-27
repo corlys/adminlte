@@ -3,7 +3,7 @@ package seeder
 import (
 	"errors"
 
-	"github.com/corlys/adminlte/app/entity"
+	"github.com/corlys/adminlte/core/entity"
 	"gorm.io/gorm"
 )
 

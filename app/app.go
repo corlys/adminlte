@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/corlys/adminlte/app/entity"
 	"github.com/corlys/adminlte/common"
+	"github.com/corlys/adminlte/core/entity"
 	"github.com/corlys/adminlte/views"
 	"gorm.io/gorm"
 

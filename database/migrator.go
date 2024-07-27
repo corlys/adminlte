@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"github.com/corlys/adminlte/app/entity"
+	"github.com/corlys/adminlte/core/entity"
 	"github.com/corlys/adminlte/database/seeder"
 	"gorm.io/gorm"
 )
