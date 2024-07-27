@@ -18,7 +18,11 @@ func main() {
 
 	app.Static("/dist", "./dist")
 
-	app.GET("/", func(c *gin.Context) {
+	app.GET("/register", func(c *gin.Context) {
+		render(c, 200, views.MakeRegisterPage())
+	})
+
+	app.GET("/login", func(c *gin.Context) {
 		render(c, 200, views.MakeLoginPage())
 	})
 
