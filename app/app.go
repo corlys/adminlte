@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ type RegisterRequest struct {
 	FullName string `form:"full_name" binding:"required"`
 }
 
-func main() {
+func SetupApp() *gin.Engine {
 
 	app := gin.Default()
 
@@ -70,6 +70,6 @@ func main() {
 
 	})
 
-	app.Run()
+	return app
 
 }
