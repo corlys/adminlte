@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/corlys/adminlte/common/base"
@@ -27,6 +26,7 @@ type UserController interface {
 	RenderRegis(ctx *gin.Context)
 	RenderHome(ctx *gin.Context)
 	HandleLogin(ctx *gin.Context)
+	HandleRegis(ctx *gin.Context)
 }
 
 func NewUserController(uService service.UserService) UserController {
@@ -37,27 +37,27 @@ func NewUserController(uService service.UserService) UserController {
 
 func (c *userController) RenderLogin(ctx *gin.Context) {
 	render(ctx, http.StatusOK, views.MakeLoginPage())
-	return
 }
 func (c *userController) RenderRegis(ctx *gin.Context) {
 	render(ctx, http.StatusOK, views.MakeRegisterPage())
-	return
 }
 func (c *userController) RenderHome(ctx *gin.Context) {
 	render(ctx, http.StatusOK, views.MakeHomePage())
-	return
 }
 func (c *userController) HandleLogin(ctx *gin.Context) {
-
 	var userDto dto.UserLoginRequest
 	err := ctx.ShouldBind(&userDto)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Login Failed", err.Error(), http.StatusBadRequest))
 	}
-	user, err := c.userService.GetUserByEmail(userDto.Email)
+	render(ctx, http.StatusOK, views.MakeHomePage())
+}
+func (c *userController) HandleRegis(ctx *gin.Context) {
+	var userDto dto.UserRegisterRequest
+	err := ctx.ShouldBind(&userDto)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Login Failed", err.Error(), http.StatusBadRequest))
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Regis Failed", err.Error(), http.StatusBadRequest))
 	}
-	fmt.Println(user)
-	c.RenderHome(ctx)
+	c.userService.RegisterUser(userDto)
+	render(ctx, http.StatusOK, views.MakeHomePage())
 }

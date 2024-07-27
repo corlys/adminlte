@@ -14,5 +14,6 @@ func UserRouter(router *gin.Engine, userC controller.UserController) {
 		userRoutes.GET("login", userC.RenderLogin)
 
 		userRoutes.POST("login", userC.HandleLogin)
+		userRoutes.POST("register", userC.HandleRegis)
 	}
 }

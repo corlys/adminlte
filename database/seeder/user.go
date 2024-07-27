@@ -4,15 +4,17 @@ import (
 	"errors"
 
 	"github.com/corlys/adminlte/core/entity"
+
 	"gorm.io/gorm"
 )
 
 func Userseeder(db *gorm.DB) error {
+
 	var dummyUsers = []entity.User{
 		{
 			Email:    "opunk55@gmail.com",
 			FullName: "Mehmud",
-			Password: "123456",
+			Password: "password",
 		},
 	}
 

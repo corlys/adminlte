@@ -2,9 +2,12 @@ package service
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/corlys/adminlte/core/helper/dto"
 	"github.com/corlys/adminlte/core/repository"
+	"github.com/corlys/adminlte/core/entity"
+	errs "github.com/corlys/adminlte/core/helper/errors"
 )
 
 type userService struct {
@@ -14,6 +17,7 @@ type userService struct {
 type UserService interface {
 	VerifyLogin(email string, password string) bool
 	GetUserByEmail(email string) (dto.UserResponse, error)
+	RegisterUser(userRequest dto.UserRegisterRequest) (dto.UserResponse, error)
 }
 
 func NewUserService(userRepo repository.UserRepository) UserService {
@@ -40,4 +44,28 @@ func (s *userService) GetUserByEmail(email string) (dto.UserResponse, error) {
 		userDto.Picture = *user.GravatarUrl
 	}
 	return userDto, nil
+}
+func (s *userService) RegisterUser(userRequest dto.UserRegisterRequest) (dto.UserResponse, error) {
+	userCheck, err := s.userRepository.GetUserByEmail(userRequest.Email)
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+	if !(reflect.DeepEqual(userCheck, entity.User{})) {
+		return dto.UserResponse{}, errs.ErrEmailAlreadyExists
+	}
+	user := entity.User{
+		FullName:     userRequest.FullName,
+		Email:    userRequest.Email,
+		Password: userRequest.Password,
+	}
+	res, err := s.userRepository.CreateNewUser(user)
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+	return dto.UserResponse{
+		ID: fmt.Sprint(res.ID),
+		Name: res.FullName,
+		Email: res.Email,
+		Picture: *res.GravatarUrl,
+	}, nil
 }
