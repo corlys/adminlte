@@ -7,6 +7,7 @@ import (
 	"github.com/corlys/adminlte/core/helper/dto"
 	"github.com/corlys/adminlte/core/repository"
 	"github.com/corlys/adminlte/core/entity"
+	"github.com/corlys/adminlte/common/util"
 	errs "github.com/corlys/adminlte/core/helper/errors"
 )
 
@@ -27,7 +28,19 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 }
 
 func (s *userService) VerifyLogin(email string, password string) bool {
-	return true
+	userCheck, err := s.userRepository.GetUserByEmail(email)
+	if err != nil {
+		return false
+	}
+	passwordCheck, err := util.PasswordCompare(userCheck.Password, []byte(password))
+	if err != nil {
+		return false
+	}
+
+	if userCheck.Email == email && passwordCheck {
+		return true
+	}
+	return false
 }
 func (s *userService) GetUserByEmail(email string) (dto.UserResponse, error) {
 	user, err := s.userRepository.GetUserByEmail(email)

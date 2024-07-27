@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"fmt"
 
 	"github.com/corlys/adminlte/common/base"
 	"github.com/corlys/adminlte/core/helper/dto"
@@ -50,7 +51,15 @@ func (c *userController) HandleLogin(ctx *gin.Context) {
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Login Failed", err.Error(), http.StatusBadRequest))
 	}
-	render(ctx, http.StatusOK, views.MakeHomePage())
+	loggedIn := c.userService.VerifyLogin(userDto.Email, userDto.Password)
+	fmt.Println(loggedIn, userDto)
+	if loggedIn {
+		render(ctx, http.StatusOK, views.MakeHomePage())		
+		return
+	} else {
+		render(ctx, http.StatusOK, views.MakeLoginPage())
+		return
+	}
 }
 func (c *userController) HandleRegis(ctx *gin.Context) {
 	var userDto dto.UserRegisterRequest
