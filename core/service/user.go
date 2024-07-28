@@ -24,6 +24,7 @@ type UserService interface {
 	RegisterUser(userRequest dto.UserRegisterRequest) (dto.UserResponse, error)
 	GenerateTotp(email string) (*otp.Key, error)
 	ValidateTotp(email string, code string) bool
+	GetUserTotp(email string) string
 }
 
 func NewUserService(userRepo repository.UserRepository) UserService {
@@ -35,10 +36,12 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 func (s *userService) VerifyLogin(email string, password string) bool {
 	userCheck, err := s.userRepository.GetUserByEmail(email)
 	if err != nil {
+		fmt.Println("wrong user")
 		return false
 	}
 	passwordCheck, err := util.PasswordCompare(userCheck.Password, []byte(password))
 	if err != nil {
+		fmt.Println("wrong password")
 		return false
 	}
 
@@ -104,6 +107,14 @@ func (s *userService) GenerateTotp(email string) (*otp.Key, error) {
 		return nil, err
 	}
 	return key, nil
+}
+func (s *userService) GetUserTotp(email string) string {
+	url, err := s.userRepository.GetTotpSecret(email)
+	if err != nil || url == "" {
+		fmt.Println(err, url)
+		return ""
+	}
+	return url
 }
 func (s *userService) ValidateTotp(email string, code string) bool {
 	secret, err := s.userRepository.GetTotpSecret(email)

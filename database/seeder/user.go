@@ -30,14 +30,14 @@ func Userseeder(db *gorm.DB) error {
 		var user entity.User
 
 		key, errGenOtp := totp.Generate(totp.GenerateOpts{
-			Issuer:      "app",
+			Issuer:      "adminlte-go",
 			AccountName: data.Email,
 		})
 		if errGenOtp != nil {
 			return errGenOtp
 		}
 
-		totpSecret := key.Secret()
+		totpSecret := key.URL()
 		data.TotpSecret = &totpSecret
 
 		err := db.Where(&entity.User{Email: data.Email}).First(&user).Error
@@ -47,7 +47,7 @@ func Userseeder(db *gorm.DB) error {
 
 		isData := db.Find(&user, "email = ?", data.Email).RowsAffected
 		if isData == 0 {
-			if err := db.Create(&data).Error; err != nil {
+			if err := db.Debug().Create(&data).Error; err != nil {
 				return err
 			}
 		}
