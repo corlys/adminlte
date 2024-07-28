@@ -99,7 +99,7 @@ func (s *userService) GenerateTotp(email string) (*otp.Key, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = s.userRepository.UpsertTotpSecret(user, key.Secret())
+	err = s.userRepository.UpsertTotpSecret(user, key.URL())
 	if err != nil {
 		return nil, err
 	}
@@ -111,5 +111,10 @@ func (s *userService) ValidateTotp(email string, code string) bool {
 		fmt.Println(err, secret)
 		return false
 	}
-	return totp.Validate(code, secret)
+	key, err := otp.NewKeyFromURL(secret)
+	if err != nil {
+		fmt.Println(err, secret, key)
+		return false
+	}
+	return totp.Validate(code, key.Secret())
 }

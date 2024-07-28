@@ -1,6 +1,6 @@
 package views
 
-templ MakeTOTPVerifyPage() {
+templ MakeTOTPVerifyPage(email string) {
 	<html>
 		<head>
 			<title>Two-Factor Authentication</title>
@@ -56,7 +56,8 @@ templ MakeTOTPVerifyPage() {
 				<h1>Two-Factor Authentication</h1>
 				<p>Enter the code from your authenticator app:</p>
 				<form action="/totp-verify" method="POST">
-					<input type="text" name="totp_code" placeholder="Enter TOTP code" required/>
+					<input type="text" name="otp_code" placeholder="Enter TOTP code" required/>
+					<input type="hidden" name="account_name" value={ email } required/>
 					<button type="submit">Verify</button>
 				</form>
 			</div>

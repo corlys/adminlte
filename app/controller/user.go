@@ -35,6 +35,7 @@ type UserController interface {
 	HandleRegis(ctx *gin.Context)
 	HandleLogout(ctx *gin.Context)
 	HandleTotpSetup(ctx *gin.Context)
+	HandleTotpVerify(ctx *gin.Context)
 }
 
 func NewUserController(uService service.UserService, sService service.SessionService) UserController {
@@ -70,7 +71,7 @@ func (c *userController) RenderTotpSetup(ctx *gin.Context) {
 	render(ctx, http.StatusOK, views.MakeTOTPSetupPage(qrCodeUrl, key.AccountName()))
 }
 func (c *userController) RenderTotpVerify(ctx *gin.Context) {
-	render(ctx, http.StatusOK, views.MakeTOTPVerifyPage())
+	render(ctx, http.StatusOK, views.MakeTOTPVerifyPage(""))
 }
 func (c *userController) HandleLogin(ctx *gin.Context) {
 	var userDto dto.UserLoginRequest
@@ -103,6 +104,7 @@ func (c *userController) HandleRegis(ctx *gin.Context) {
 }
 func (c *userController) HandleLogout(ctx *gin.Context) {
 	c.sessionService.DeleteUserSession(ctx)
+	c.sessionService.DeleteTotpKeySession(ctx)
 	ctx.Redirect(http.StatusSeeOther, "/")
 }
 func (c *userController) HandleTotpSetup(ctx *gin.Context) {
@@ -125,3 +127,4 @@ func (c *userController) HandleTotpSetup(ctx *gin.Context) {
 		ctx.Redirect(http.StatusSeeOther, "/")
 	}
 }
+func (c *userController) HandleTotpVerify(ctx *gin.Context) {}
