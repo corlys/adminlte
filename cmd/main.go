@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/gob"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/corlys/adminlte/app/controller"
@@ -33,7 +34,7 @@ func main() {
 
 	gob.Register(dto.UserResponse{})
 
-	store := cookie.NewStore([]byte("secret"))
+	store := cookie.NewStore([]byte(os.Getenv("SESSION_SECRET")))
 	store.Options(sessions.Options{
 		Path:   "/",
 		MaxAge: int(time.Hour.Seconds() * 1),
