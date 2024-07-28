@@ -15,9 +15,16 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading environment table")
+		panic(err)
+	}
 
 	db := config.DBSetup()
 	defer config.DBClose(db)
@@ -43,10 +50,10 @@ func main() {
 
 	router.UserRouter(server, newUserController)
 
-	err := server.Run()
-	if err != nil {
+	errServ := server.Run()
+	if errServ != nil {
 		fmt.Println(err)
-		panic(err)
+		panic(errServ)
 	}
 
 }

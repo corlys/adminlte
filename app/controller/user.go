@@ -29,6 +29,7 @@ type UserController interface {
 	RenderHome(ctx *gin.Context)
 	HandleLogin(ctx *gin.Context)
 	HandleRegis(ctx *gin.Context)
+	HandleLogout(ctx *gin.Context)
 }
 
 func NewUserController(uService service.UserService, sService service.SessionService) UserController {
@@ -75,4 +76,8 @@ func (c *userController) HandleRegis(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Regis Failed", err.Error(), http.StatusBadRequest))
 	}
 	ctx.Redirect(http.StatusSeeOther, "/login")
+}
+func (c *userController) HandleLogout(ctx *gin.Context) {
+	c.sessionService.DeleteUserSession(ctx)
+	ctx.Redirect(http.StatusSeeOther, "/")
 }

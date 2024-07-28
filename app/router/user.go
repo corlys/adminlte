@@ -12,6 +12,7 @@ func UserRouter(router *gin.Engine, userC controller.UserController) {
 		userRoutes.GET("", userC.RenderHome)
 		userRoutes.GET("register", userC.RenderRegis)
 		userRoutes.GET("login", userC.RenderLogin)
+		userRoutes.GET("logout", userC.HandleLogout)
 
 		userRoutes.POST("login", userC.HandleLogin)
 		userRoutes.POST("register", userC.HandleRegis)

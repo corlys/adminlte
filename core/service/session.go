@@ -13,6 +13,7 @@ type sessionService struct{}
 type SessionService interface {
 	GetUserSession(ctx *gin.Context) dto.UserResponse
 	SetUserSession(ctx *gin.Context, userDto dto.UserResponse)
+	DeleteUserSession(ctx *gin.Context)
 }
 
 func NewSessionService() SessionService {
@@ -41,4 +42,9 @@ func (ss sessionService) SetUserSession(ctx *gin.Context, userDto dto.UserRespon
 		fmt.Println(err)
 	}
 	fmt.Println("Session is saved ", userDto)
+}
+func (ss sessionService) DeleteUserSession(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+	session.Delete("user")
+	session.Save()
 }
