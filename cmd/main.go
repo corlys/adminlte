@@ -1,12 +1,14 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"time"
 
 	"github.com/corlys/adminlte/app/controller"
 	"github.com/corlys/adminlte/app/router"
 	"github.com/corlys/adminlte/config"
+	"github.com/corlys/adminlte/core/helper/dto"
 	"github.com/corlys/adminlte/core/repository"
 	"github.com/corlys/adminlte/core/service"
 
@@ -21,6 +23,9 @@ func main() {
 	defer config.DBClose(db)
 
 	server := gin.Default()
+
+	gob.Register(dto.UserResponse{})
+
 	store := cookie.NewStore([]byte("secret"))
 	store.Options(sessions.Options{
 		Path:   "/",

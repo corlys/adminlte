@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/corlys/adminlte/core/helper/dto"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -9,7 +11,7 @@ import (
 type sessionService struct{}
 
 type SessionService interface {
-	GetUserSession(ctx *gin.Context, userDto dto.UserResponse) dto.UserResponse
+	GetUserSession(ctx *gin.Context) dto.UserResponse
 	SetUserSession(ctx *gin.Context, userDto dto.UserResponse)
 }
 
@@ -17,10 +19,11 @@ func NewSessionService() SessionService {
 	return &sessionService{}
 }
 
-func (ss sessionService) GetUserSession(ctx *gin.Context, userDto dto.UserResponse) dto.UserResponse {
+func (ss sessionService) GetUserSession(ctx *gin.Context) dto.UserResponse {
 	session := sessions.Default(ctx)
-	userInterface := session.Get("user:" + userDto.Email)
-	if userInterface != nil {
+	userInterface := session.Get("user")
+	fmt.Println("userInterface ", userInterface)
+	if userInterface == nil {
 		return dto.UserResponse{}
 	}
 	user, ok := userInterface.(dto.UserResponse)
@@ -32,6 +35,10 @@ func (ss sessionService) GetUserSession(ctx *gin.Context, userDto dto.UserRespon
 }
 func (ss sessionService) SetUserSession(ctx *gin.Context, userDto dto.UserResponse) {
 	session := sessions.Default(ctx)
-	session.Set("user:"+userDto.Email, userDto)
-	session.Save()
+	session.Set("user", userDto)
+	err := session.Save()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Session is saved ", userDto)
 }

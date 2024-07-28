@@ -1,6 +1,14 @@
 package views
 
-templ MakeHomePage() {
+import (
+	"github.com/corlys/adminlte/core/helper/dto"
+)
+
+func isLoggedIn(user dto.UserResponse) bool {
+	return user.Email != ""
+}
+
+templ MakeHomePage(user dto.UserResponse) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<!--begin::Head-->
@@ -199,23 +207,24 @@ templ MakeHomePage() {
 							</li> <!--end::Fullscreen Toggle-->
 							<!--begin::User Menu Dropdown-->
 							<li class="nav-item dropdown user-menu">
-								<a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-									<img
-										src="../../dist/assets/img/user2-160x160.jpg"
-										class="user-image rounded-circle shadow"
-										alt="User Image"
-									/>
-									<span class="d-none d-md-inline">
-										Alexander
-										Pierce
-									</span>
-								</a>
+								if isLoggedIn(user) {
+									<a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+										<img
+											src="../../dist/assets/img/user2-160x160.jpg"
+											class="user-image rounded-circle shadow"
+											alt="User Image"
+										/>
+										<span class="d-none d-md-inline">
+											{ user.Name }
+										</span>
+									</a>
+								}
 								<ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
 									<!--begin::User Image-->
 									<li class="user-header text-bg-primary">
 										<img src="../../dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="User Image"/>
 										<p>
-											Alexander Pierce - Web Developer
+											{ user.Name } - Web Developer
 											<small>Member since Nov. 2023</small>
 										</p>
 									</li> <!--end::User Image-->
