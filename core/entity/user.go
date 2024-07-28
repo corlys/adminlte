@@ -11,6 +11,7 @@ type User struct {
 	Email       string  `json:"email" gorm:"unique;not null"`
 	FullName    string  `json:"fullname" gorm:"not null"`
 	Password    string  `json:"password" gorm:"not null"`
+	TotpSecret  *string `json:"totpSecret"`
 	GravatarUrl *string `json:"gravatarUrl"`
 }
 
@@ -37,3 +38,4 @@ func (u *User) BeforeUpdate(db *gorm.DB) error {
 	u.GravatarUrl = &gravatarUrl
 	return nil
 }
+

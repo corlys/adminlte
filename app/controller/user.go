@@ -71,11 +71,12 @@ func (c *userController) HandleRegis(ctx *gin.Context) {
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Regis Failed", err.Error(), http.StatusBadRequest))
 	}
-	_, erro := c.userService.RegisterUser(userDto)
+	user, erro := c.userService.RegisterUser(userDto)
 	if erro != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Regis Failed", err.Error(), http.StatusBadRequest))
 	}
-	ctx.Redirect(http.StatusSeeOther, "/login")
+	c.sessionService.SetUserSession(ctx, user)
+	ctx.Redirect(http.StatusSeeOther, "/")
 }
 func (c *userController) HandleLogout(ctx *gin.Context) {
 	c.sessionService.DeleteUserSession(ctx)

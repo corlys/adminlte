@@ -3,12 +3,16 @@ package service
 import (
 	"fmt"
 	"reflect"
+	"time"
 
 	"github.com/corlys/adminlte/common/util"
 	"github.com/corlys/adminlte/core/entity"
 	"github.com/corlys/adminlte/core/helper/dto"
 	errs "github.com/corlys/adminlte/core/helper/errors"
 	"github.com/corlys/adminlte/core/repository"
+
+	"github.com/pquerna/otp"
+	"github.com/pquerna/otp/totp"
 )
 
 type userService struct {
@@ -19,6 +23,8 @@ type UserService interface {
 	VerifyLogin(email string, password string) bool
 	GetUserByEmail(email string) (dto.UserResponse, error)
 	RegisterUser(userRequest dto.UserRegisterRequest) (dto.UserResponse, error)
+	GenerateTotp(email string) (*otp.Key, error)
+	ValidateTotp(email string, code string) bool
 }
 
 func NewUserService(userRepo repository.UserRepository) UserService {
@@ -81,4 +87,30 @@ func (s *userService) RegisterUser(userRequest dto.UserRegisterRequest) (dto.Use
 		Email:   res.Email,
 		Picture: *res.GravatarUrl,
 	}, nil
+}
+func (s *userService) GenerateTotp(email string) (*otp.Key, error) {
+	key, err := totp.Generate(totp.GenerateOpts{
+		Issuer:      "YourAppName",
+		AccountName: email,
+		Period:      uint(time.Second * 60),
+	})
+	if err != nil {
+		return nil, err
+	}
+	user, err := s.userRepository.GetUserByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+	err = s.userRepository.UpsertTotpSecret(user, key.Secret())
+	if err != nil {
+		return nil, err
+	}
+	return key, nil
+}
+func (s *userService) ValidateTotp(email string, code string) bool {
+	secret, err := s.userRepository.GetTotpSecret(email)
+	if err != nil || secret == "" {
+		return false
+	}
+	return totp.Validate(secret, email)
 }
