@@ -27,6 +27,8 @@ type UserController interface {
 	RenderLogin(ctx *gin.Context)
 	RenderRegis(ctx *gin.Context)
 	RenderHome(ctx *gin.Context)
+	RenderTotpSetup(ctx *gin.Context)
+	RenderTotpVerify(ctx *gin.Context)
 	HandleLogin(ctx *gin.Context)
 	HandleRegis(ctx *gin.Context)
 	HandleLogout(ctx *gin.Context)
@@ -49,6 +51,12 @@ func (c *userController) RenderHome(ctx *gin.Context) {
 	user := c.sessionService.GetUserSession(ctx)
 	fmt.Println(user)
 	render(ctx, http.StatusOK, views.MakeHomePage(user))
+}
+func (c *userController) RenderTotpSetup(ctx *gin.Context) {
+	render(ctx, http.StatusOK, views.MakeTOTPSetupPage(""))
+}
+func (c *userController) RenderTotpVerify(ctx *gin.Context) {
+	render(ctx, http.StatusOK, views.MakeTOTPVerifyPage())
 }
 func (c *userController) HandleLogin(ctx *gin.Context) {
 	var userDto dto.UserLoginRequest
