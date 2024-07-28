@@ -1,6 +1,6 @@
 package views
 
-templ MakeTOTPSetupPage(qrCodeURL string) {
+templ MakeTOTPSetupPage(qrCodeURL string, email string) {
 	<html>
 		<head>
 			<title>Set Up Two-Factor Authentication</title>
@@ -63,7 +63,8 @@ templ MakeTOTPSetupPage(qrCodeURL string) {
 				<img src={ qrCodeURL } alt="TOTP QR Code"/>
 				<p>Then enter the code from your app to verify:</p>
 				<form action="/totp-setup" method="POST">
-					<input type="text" name="totp_code" placeholder="Enter TOTP code" required/>
+					<input type="text" name="otp_code" placeholder="Enter TOTP code" required/>
+					<input type="hidden" name="account_name" value={ email } required/>
 					<button type="submit">Verify and Enable TOTP</button>
 				</form>
 			</div>

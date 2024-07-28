@@ -3,7 +3,6 @@ package service
 import (
 	"fmt"
 	"reflect"
-	"time"
 
 	"github.com/corlys/adminlte/common/util"
 	"github.com/corlys/adminlte/core/entity"
@@ -90,9 +89,8 @@ func (s *userService) RegisterUser(userRequest dto.UserRegisterRequest) (dto.Use
 }
 func (s *userService) GenerateTotp(email string) (*otp.Key, error) {
 	key, err := totp.Generate(totp.GenerateOpts{
-		Issuer:      "YourAppName",
+		Issuer:      "adminlte-go",
 		AccountName: email,
-		Period:      uint(time.Second * 60),
 	})
 	if err != nil {
 		return nil, err
@@ -110,7 +108,8 @@ func (s *userService) GenerateTotp(email string) (*otp.Key, error) {
 func (s *userService) ValidateTotp(email string, code string) bool {
 	secret, err := s.userRepository.GetTotpSecret(email)
 	if err != nil || secret == "" {
+		fmt.Println(err, secret)
 		return false
 	}
-	return totp.Validate(secret, email)
+	return totp.Validate(code, secret)
 }

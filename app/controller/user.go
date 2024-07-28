@@ -3,11 +3,13 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/corlys/adminlte/common/base"
 	"github.com/corlys/adminlte/core/helper/dto"
 	"github.com/corlys/adminlte/core/service"
 	"github.com/corlys/adminlte/views"
+	"github.com/pquerna/otp"
 
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
@@ -32,6 +34,7 @@ type UserController interface {
 	HandleLogin(ctx *gin.Context)
 	HandleRegis(ctx *gin.Context)
 	HandleLogout(ctx *gin.Context)
+	HandleTotpSetup(ctx *gin.Context)
 }
 
 func NewUserController(uService service.UserService, sService service.SessionService) UserController {
@@ -53,7 +56,18 @@ func (c *userController) RenderHome(ctx *gin.Context) {
 	render(ctx, http.StatusOK, views.MakeHomePage(user))
 }
 func (c *userController) RenderTotpSetup(ctx *gin.Context) {
-	render(ctx, http.StatusOK, views.MakeTOTPSetupPage(""))
+	keyUrl := c.sessionService.GetTotpKeySession(ctx)
+	key, err := otp.NewKeyFromURL(keyUrl)
+	if err != nil {
+		fmt.Println("Error : ", err)
+		ctx.Redirect(http.StatusSeeOther, "/register")
+		return
+	}
+	qrCodeUrl := fmt.Sprintf(
+		"https://image-charts.com/chart?chs=200x200&cht=qr&chl=%s&choe=UTF-8",
+		url.QueryEscape(key.URL()),
+	)
+	render(ctx, http.StatusOK, views.MakeTOTPSetupPage(qrCodeUrl, key.AccountName()))
 }
 func (c *userController) RenderTotpVerify(ctx *gin.Context) {
 	render(ctx, http.StatusOK, views.MakeTOTPVerifyPage())
@@ -83,10 +97,31 @@ func (c *userController) HandleRegis(ctx *gin.Context) {
 	if erro != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Regis Failed", err.Error(), http.StatusBadRequest))
 	}
-	c.sessionService.SetUserSession(ctx, user)
-	ctx.Redirect(http.StatusSeeOther, "/")
+	secret, err := c.userService.GenerateTotp(user.Email)
+	c.sessionService.SetTotpKeySession(ctx, secret.URL())
+	ctx.Redirect(http.StatusSeeOther, "/totp-setup")
 }
 func (c *userController) HandleLogout(ctx *gin.Context) {
 	c.sessionService.DeleteUserSession(ctx)
 	ctx.Redirect(http.StatusSeeOther, "/")
+}
+func (c *userController) HandleTotpSetup(ctx *gin.Context) {
+	var totpDto dto.UserTotpRequest
+	err := ctx.ShouldBind(&totpDto)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("Failed to send TOTP", err.Error(), http.StatusBadRequest))
+	}
+	res := c.userService.ValidateTotp(totpDto.AccountName, totpDto.OtpCode)
+	if !res {
+		fmt.Println("Totp Not Valid")
+		ctx.Redirect(http.StatusSeeOther, "/totp-setup")
+	} else {
+		user, err := c.userService.GetUserByEmail(totpDto.AccountName)
+		if err != nil {
+			fmt.Println("User fetching failed")
+			ctx.Redirect(http.StatusSeeOther, "/totp-setup")
+		}
+		c.sessionService.SetUserSession(ctx, user)
+		ctx.Redirect(http.StatusSeeOther, "/")
+	}
 }

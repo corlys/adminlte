@@ -14,6 +14,9 @@ type SessionService interface {
 	GetUserSession(ctx *gin.Context) dto.UserResponse
 	SetUserSession(ctx *gin.Context, userDto dto.UserResponse)
 	DeleteUserSession(ctx *gin.Context)
+	SetTotpKeySession(ctx *gin.Context, key string)
+	GetTotpKeySession(ctx *gin.Context) string
+	DeleteTotpKeySession(ctx *gin.Context)
 }
 
 func NewSessionService() SessionService {
@@ -46,5 +49,28 @@ func (ss sessionService) SetUserSession(ctx *gin.Context, userDto dto.UserRespon
 func (ss sessionService) DeleteUserSession(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	session.Delete("user")
+	session.Save()
+}
+func (ss sessionService) SetTotpKeySession(ctx *gin.Context, key string) {
+	session := sessions.Default(ctx)
+	session.Set("totp-key", key)
+	session.Save()
+}
+func (ss sessionService) GetTotpKeySession(ctx *gin.Context) string {
+	session := sessions.Default(ctx)
+	key := session.Get("totp-key")
+	if key == nil {
+		return ""
+	}
+	secret, ok := key.(string)
+	if !ok {
+		return ""
+	} else {
+		return secret
+	}
+}
+func (ss sessionService) DeleteTotpKeySession(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+	session.Delete("totp-key")
 	session.Save()
 }

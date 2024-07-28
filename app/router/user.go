@@ -18,5 +18,6 @@ func UserRouter(router *gin.Engine, userC controller.UserController) {
 
 		userRoutes.POST("login", userC.HandleLogin)
 		userRoutes.POST("register", userC.HandleRegis)
+		userRoutes.POST("totp-setup", userC.HandleTotpSetup)
 	}
 }

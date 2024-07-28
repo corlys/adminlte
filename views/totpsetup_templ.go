@@ -10,7 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
-func MakeTOTPSetupPage(qrCodeURL string) templ.Component {
+func MakeTOTPSetupPage(qrCodeURL string, email string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -31,7 +31,15 @@ func MakeTOTPSetupPage(qrCodeURL string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" alt=\"TOTP QR Code\"><p>Then enter the code from your app to verify:</p><form action=\"/totp-setup\" method=\"POST\"><input type=\"text\" name=\"totp_code\" placeholder=\"Enter TOTP code\" required> <button type=\"submit\">Verify and Enable TOTP</button></form></div></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" alt=\"TOTP QR Code\"><p>Then enter the code from your app to verify:</p><form action=\"/totp-setup\" method=\"POST\"><input type=\"text\" name=\"otp_code\" placeholder=\"Enter TOTP code\" required> <input type=\"hidden\" name=\"account_name\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(email))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" required> <button type=\"submit\">Verify and Enable TOTP</button></form></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
