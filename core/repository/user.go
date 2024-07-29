@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/corlys/adminlte/core/entity"
 	"gorm.io/gorm"
@@ -39,9 +40,9 @@ func (r *userRepository) CreateNewUser(user entity.User) (entity.User, error) {
 	return user, nil
 }
 func (r *userRepository) UpsertTotpSecret(user entity.User, secret string) error {
-	user.TotpSecret = &secret
-	err := r.db.Debug().Save(&user).Error
+	err := r.db.Debug().Model(&entity.User{}).Where("email = ?", user.Email).Update("totp_secret", secret).Error
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	return nil

@@ -110,6 +110,9 @@ func (c *userController) HandleRegis(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Regis Failed", err.Error(), http.StatusBadRequest))
 	}
 	secret, err := c.userService.GenerateTotp(user.Email)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse("User Regis Failed", err.Error(), http.StatusBadRequest))
+	}
 	c.sessionService.SetTotpKeySession(ctx, secret.URL())
 	ctx.Redirect(http.StatusSeeOther, "/totp-setup")
 }

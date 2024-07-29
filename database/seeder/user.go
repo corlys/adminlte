@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/corlys/adminlte/core/entity"
 
@@ -47,6 +48,7 @@ func Userseeder(db *gorm.DB) error {
 
 		isData := db.Find(&user, "email = ?", data.Email).RowsAffected
 		if isData == 0 {
+			fmt.Println("data entity ", data)
 			if err := db.Debug().Create(&data).Error; err != nil {
 				return err
 			}

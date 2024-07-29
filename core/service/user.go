@@ -79,6 +79,7 @@ func (s *userService) RegisterUser(userRequest dto.UserRegisterRequest) (dto.Use
 		Email:    userRequest.Email,
 		Password: userRequest.Password,
 	}
+	fmt.Println("data entity", user)
 	res, err := s.userRepository.CreateNewUser(user)
 	if err != nil {
 		return dto.UserResponse{}, err
@@ -102,6 +103,8 @@ func (s *userService) GenerateTotp(email string) (*otp.Key, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(key.Secret())
+	fmt.Println(key.URL())
 	err = s.userRepository.UpsertTotpSecret(user, key.URL())
 	if err != nil {
 		return nil, err
