@@ -10,6 +10,8 @@ DB_PORT=5432
 SESSION_SECRET=xxxVelaryonxxx
 ```
 
+Make sure to have postgres db, and put the requirements in the .env above
+
 Make sure to install Go
 
 and then do the package install
