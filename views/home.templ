@@ -198,11 +198,8 @@ templ MakeHomePage(user dto.UserResponse) {
 							<!--begin::Fullscreen Toggle-->
 							<li class="nav-item">
 								<a class="nav-link" href="#" data-lte-toggle="fullscreen">
-									<i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i> <i
-	data-lte-icon="minimize"
-	class="bi bi-fullscreen-exit"
-	style="display: none;"
-></i>
+									<i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+									<i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none;"></i>
 								</a>
 							</li> <!--end::Fullscreen Toggle-->
 							<!--begin::User Menu Dropdown-->
@@ -217,6 +214,13 @@ templ MakeHomePage(user dto.UserResponse) {
 										<span class="d-none d-md-inline">
 											{ user.Name }
 										</span>
+									</a>
+								} else {
+									<a href="/login" class="btn btn-primary">
+										Login
+									</a>
+									<a href="/register" class="btn btn-primary">
+										Register
 									</a>
 								}
 								<ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
